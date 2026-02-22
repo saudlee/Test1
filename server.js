@@ -30,6 +30,12 @@ wss.on('connection', (ws) => {
                 rooms.get(roomID).add(ws);
                 console.log(`User joined room: ${roomID}`);
 
+                // Send count to the newcomer
+                ws.send(JSON.stringify({
+                    type: 'joined',
+                    count: rooms.get(roomID).size
+                }));
+
                 // Notify others in the room
                 rooms.get(roomID).forEach(client => {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -41,7 +47,9 @@ wss.on('connection', (ws) => {
             case 'offer':
             case 'answer':
             case 'candidate':
-            case 'video-state': // For syncing movie playback
+            case 'video-sync': // Modernized name for sync
+            case 'load-video': // Explicit video load signaling
+            case 'request-sync': // Peer asking for current film
                 // Broadcast to the other person in the room
                 if (currentRoom && rooms.has(currentRoom)) {
                     rooms.get(currentRoom).forEach(client => {
