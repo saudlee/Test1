@@ -50,6 +50,7 @@ wss.on('connection', (ws) => {
             case 'video-sync': // Modernized name for sync
             case 'load-video': // Explicit video load signaling
             case 'request-sync': // Peer asking for current film
+            case 'refresh-cams': // Manually restart WebRTC
                 // Broadcast to the other person in the room
                 if (currentRoom && rooms.has(currentRoom)) {
                     rooms.get(currentRoom).forEach(client => {
